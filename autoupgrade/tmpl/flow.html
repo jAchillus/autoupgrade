@@ -1,0 +1,55 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Flow</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="{% static 'element-ui-2.13.0/index.js' %}"></script>
+    <script src="{% static 'js/flow.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'element-ui-2.13.0/theme-chalk/index.css' %}">
+</head>
+
+<body onload="finish()">
+    <script type="text/javascript">
+    var verList = {{ verList | safe }}
+    var serverListOri = {{ server_list | safe }}
+    var appListOri = {{ appList | safe }}
+    </script>
+    <div id="app-1">
+        <el-form ref="form" :model="form" label-width="100px" >
+            {% csrf_token %}
+            <el-form-item label="应用:" required>
+                <el-select v-model="form.app" placeholder="更新应用">
+                    <el-option v-for="item in form.appOptions" :key="item.value" :label="item.label" :value="item.value" :disabled="item.disabled">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="版本:" required>
+                <el-select v-model="form.verType" placeholder="请选择版本类型" @change="changeVerType" required>
+                    <el-option v-for="item in form.verTypeOptions" :key="item.value" :label="item.label" :value="item.value" :disabled="item.disabled">
+                    </el-option>
+                </el-select>
+                <el-select v-model="form.versionNo" placeholder="请选择">
+                    <el-option v-for="item in form.verOptions" :key="item.value" :label="item.label" :value="item.value" :disabled="item.disabled">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="更新对象:" required>
+                <el-select v-model="form.destServer" placeholder="目标机器">
+                    <el-option v-for="item in form.destServerOptions" :key="item.value" :label="item.label" :value="item.value" :disabled="item.disabled">
+                    </el-option>
+                </el-select>
+                <el-button type="primary" @click="onSubmit" :disabled="form.subBtnDisabled">upgrade</el-button>
+            </el-form-item>
+            <el-form-item v-if="form.isSub">
+                <el-progress :text-inside="form.curOper" :status="form.curStatus" :stroke-width="26" :percentage="form.updatePer"></el-progress>
+            </el-form-item>
+        </el-form>
+        </el-form-item>
+    </div>
+</body>
+
+</html>
